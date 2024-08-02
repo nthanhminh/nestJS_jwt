@@ -16,7 +16,6 @@ import { UserResponse } from './dto/userResponse.dto';
 import { Role } from 'src/Roles/enums/roles.enum';
 import { Roles } from 'src/Roles/roles.decorator';
 import { IUserRequest } from 'src/common/interfaces/requestType.interface';
-// import { UserDocument } from './schemas/user.schema';
 
 @ApiTags('users')
 @Controller('users')
@@ -33,14 +32,25 @@ export class UsersController {
   })
   @ApiResponse({ status: 400, description: 'Bad request.' })
   async create(@Body() createUserDto: CreateUserDto) {
-    const hashedPasswd = await this.usersService.hashData(
-      createUserDto.password,
-    );
-    const newData = {
-      ...createUserDto,
-      password: hashedPasswd,
-    };
-    return this.usersService.create(newData);
+    try {
+      const hashedPasswd = await this.usersService.hashData(
+        createUserDto.password,
+      );
+      const newData = {
+        ...createUserDto,
+        password: hashedPasswd,
+      };
+      await this.usersService.create(newData);
+      return {
+        status: 200,
+        description: 'User successfully created.',
+      };
+    } catch (error) {
+      return {
+        status: 400,
+        description: 'Bad request.',
+      };
+    }
   }
 
   @Roles(Role.Admin)
@@ -53,15 +63,19 @@ export class UsersController {
   })
   @ApiResponse({ status: 404, description: 'Users not found.' })
   async findAll() {
-    const users = await this.usersService.findAll();
-    const res = users.map((user) => {
-      return {
-        name: user.name,
-        userName: user.userName,
-        role: user.role,
-      };
-    });
-    return res;
+    try {
+      const users = await this.usersService.findAll();
+      const res = users.map((user) => {
+        return {
+          name: user.name,
+          userName: user.userName,
+          role: user.role,
+        };
+      });
+      return res;
+    } catch (error) {
+      return { status: 404, description: 'Users not found.' };
+    }
   }
 
   @Get('getInfo')
@@ -71,15 +85,23 @@ export class UsersController {
     description: 'Successfully retrieved the list of users.',
     type: [UserResponse],
   })
+  @ApiResponse({
+    status: 400,
+    description: 'Bad request.',
+  })
   async findById(@Req() req: IUserRequest) {
-    const id = req.user['sub'];
-    console.log(id);
-    const user = await this.usersService.findById(id);
-    return {
-      name: user.name,
-      userName: user.userName,
-      role: user.role,
-    };
+    try {
+      const id = req.user['sub'];
+      console.log(id);
+      const user = await this.usersService.findById(id);
+      return {
+        name: user.name,
+        userName: user.userName,
+        role: user.role,
+      };
+    } catch (error) {
+      return { status: 400, description: 'Users not found.' };
+    }
   }
 
   @Roles(Role.Admin)
@@ -89,6 +111,7 @@ export class UsersController {
     status: 200,
     description: 'Successfully retrieved the list of users.',
   })
+  @ApiResponse({ status: 400, description: 'Bad request.' })
   async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     try {
       await this.usersService.update(id, updateUserDto);
@@ -97,14 +120,18 @@ export class UsersController {
         message: 'Successfully updated the user',
       };
     } catch (error) {
-      return {
-        message: 'error',
-      };
+      return { status: 400, description: 'Bad request.' };
     }
   }
 
   @Roles(Role.Admin)
   @Delete('remove/:id')
+  @ApiOperation({ summary: 'remove user' })
+  @ApiResponse({
+    status: 200,
+    description: 'Successfully removed the user.',
+  })
+  @ApiResponse({ status: 400, description: 'Bad request.' })
   async remove(@Param('id') id: string) {
     try {
       await this.usersService.remove(id);
@@ -113,9 +140,7 @@ export class UsersController {
         message: 'Successfully removed the user',
       };
     } catch (error) {
-      return {
-        message: 'error',
-      };
+      return { status: 400, description: 'Bad request.' };
     }
   }
 }
