@@ -4,6 +4,7 @@ import { Model } from 'mongoose';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User, UserDocument } from './schemas/user.schema';
+import * as argon2 from 'argon2';
 
 @Injectable()
 export class UsersService {
@@ -38,5 +39,9 @@ export class UsersService {
 
   async remove(id: string): Promise<UserDocument> {
     return this.userModel.findByIdAndDelete(id).exec();
+  }
+
+  hashData(data: string) {
+    return argon2.hash(data);
   }
 }

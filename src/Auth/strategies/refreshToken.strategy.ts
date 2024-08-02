@@ -1,10 +1,7 @@
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { Request } from 'express';
 import { Injectable } from '@nestjs/common';
-interface IUserRequest extends Request {
-  user: any;
-}
+import { IUserRequest } from '../../common/interfaces/requestType.interface';
 @Injectable()
 export class RefreshTokenStrategy extends PassportStrategy(
   Strategy,

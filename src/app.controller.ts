@@ -1,5 +1,8 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Req } from '@nestjs/common';
 import { AppService } from './app.service';
+import { IUserRequest } from './common/interfaces/requestType.interface';
+import { Roles } from './Roles/roles.decorator';
+import { Role } from './Roles/enums/roles.enum';
 
 @Controller()
 export class AppController {
@@ -11,8 +14,10 @@ export class AppController {
     return this.appService.getHello();
   }
 
+  @Roles(Role.User)
   @Get('info')
-  async getInfo(): Promise<string> {
-    return 'Information';
+  async getInfo(@Req() req: IUserRequest): Promise<string> {
+    console.log(req.user);
+    return `Information ${req.user}`;
   }
 }

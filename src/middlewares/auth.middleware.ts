@@ -1,12 +1,13 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Request, Response, NextFunction } from 'express';
+import { Response, NextFunction } from 'express';
 import * as jwt from 'jsonwebtoken';
+import { IUserRequest } from 'src/common/interfaces/requestType.interface';
 
 @Injectable()
 export class AuthMiddleware implements NestMiddleware {
   constructor(private configService: ConfigService) {}
-  use(req: Request, res: Response, next: NextFunction) {
+  use(req: IUserRequest, res: Response, next: NextFunction) {
     const authHeader = req.headers.authorization;
 
     if (authHeader) {
@@ -16,6 +17,7 @@ export class AuthMiddleware implements NestMiddleware {
         console.log(secret);
         const decoded = jwt.verify(token, secret);
         console.log('Valid token: ' + decoded);
+        req.user = decoded;
         next();
       } catch (error) {
         if (error.name === 'TokenExpiredError') {

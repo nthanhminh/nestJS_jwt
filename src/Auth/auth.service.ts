@@ -29,7 +29,11 @@ export class AuthService {
       ...createUserDto,
       password: hash,
     });
-    const tokens = await this.getTokens(newUser._id, newUser.userName);
+    const tokens = await this.getTokens(
+      newUser._id,
+      newUser.userName,
+      newUser.role,
+    );
     await this.updateRefreshToken(newUser._id, tokens.refreshToken);
     return tokens;
   }
@@ -40,7 +44,7 @@ export class AuthService {
     const passwordMatches = await argon2.verify(user.password, data.password);
     if (!passwordMatches)
       throw new BadRequestException('Password is incorrect');
-    const tokens = await this.getTokens(user._id, user.userName);
+    const tokens = await this.getTokens(user._id, user.userName, user.role);
     await this.updateRefreshToken(user._id, tokens.refreshToken);
     return tokens;
   }
@@ -60,22 +64,24 @@ export class AuthService {
     });
   }
 
-  async getTokens(userId: string, username: string) {
+  async getTokens(userId: string, username: string, role: string) {
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(
         {
           sub: userId,
           username,
+          role,
         },
         {
           secret: this.configService.get<string>('JWT_ACCESS_SECRET'),
-          expiresIn: '1m',
+          expiresIn: '15m',
         },
       ),
       this.jwtService.signAsync(
         {
           sub: userId,
           username,
+          role,
         },
         {
           secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
@@ -98,7 +104,7 @@ export class AuthService {
       refreshToken,
     );
     if (!refreshTokenMatches) throw new ForbiddenException('Access Denied');
-    const tokens = await this.getTokens(user._id, user.userName);
+    const tokens = await this.getTokens(user._id, user.userName, user.role);
     await this.updateRefreshToken(user.id, tokens.refreshToken);
     return tokens;
   }

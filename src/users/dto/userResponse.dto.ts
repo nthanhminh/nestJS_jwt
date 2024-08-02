@@ -1,19 +1,13 @@
 /* eslint-disable indent */
 import { ApiProperty } from '@nestjs/swagger';
 
-export class UpdateUserDto {
+export class UserResponse {
   @ApiProperty({ description: 'The name of the user' })
-  name?: string;
+  name: string;
 
   @ApiProperty({ description: 'userName' })
-  userName?: string;
+  userName: string;
 
   @ApiProperty({ description: 'The role of the user' })
-  role?: string;
-
-  @ApiProperty({ description: 'password' })
-  password?: string;
-
-  @ApiProperty({ description: 'password' })
-  refreshToken?: string;
+  role: string;
 }
