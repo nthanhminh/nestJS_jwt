@@ -13,4 +13,7 @@ export class CreateUserDto {
 
   @ApiProperty({ description: 'password' })
   password: string;
+
+  @ApiProperty({ description: 'birthday' })
+  birthday: string;
 }

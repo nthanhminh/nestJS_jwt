@@ -7,6 +7,9 @@ import { AuthModule } from './Auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { RolesGuard } from './Roles/roles.guard';
 import { UsersModule } from './users/user.module';
+import { ScheduleModule } from '@nestjs/schedule';
+import { TasksService } from './Notifications/tasks.service';
+import { NotificationModule } from './Notifications/notifications.module';
 
 @Module({
   imports: [
@@ -14,8 +17,10 @@ import { UsersModule } from './users/user.module';
     AuthModule,
     MongooseModule.forRoot('mongodb://localhost:27017/login'),
     ConfigModule.forRoot({
-      isGlobal: true, // Make ConfigModule available globally
+      isGlobal: true,
     }),
+    ScheduleModule.forRoot(),
+    NotificationModule,
   ],
   controllers: [AppController],
   providers: [
@@ -24,6 +29,7 @@ import { UsersModule } from './users/user.module';
       provide: APP_GUARD,
       useClass: RolesGuard,
     },
+    TasksService,
   ],
 })
 export class AppModule {}

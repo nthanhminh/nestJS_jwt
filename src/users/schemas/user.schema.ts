@@ -23,6 +23,9 @@ export class User {
 
   @Prop()
   refreshToken: string;
+
+  @Prop()
+  birthday: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
