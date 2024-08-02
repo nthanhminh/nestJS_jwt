@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Req,
 } from '@nestjs/common';
 import { UsersService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -14,6 +15,7 @@ import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UserResponse } from './dto/userResponse.dto';
 import { Role } from 'src/Roles/enums/roles.enum';
 import { Roles } from 'src/Roles/roles.decorator';
+import { IUserRequest } from 'src/common/interfaces/requestType.interface';
 // import { UserDocument } from './schemas/user.schema';
 
 @ApiTags('users')
@@ -62,9 +64,22 @@ export class UsersController {
     return res;
   }
 
-  @Get(':id')
-  findById(@Param('id') id: string) {
-    return this.usersService.findById(id);
+  @Get('getInfo')
+  @ApiOperation({ summary: 'Get infomation of user' })
+  @ApiResponse({
+    status: 200,
+    description: 'Successfully retrieved the list of users.',
+    type: [UserResponse],
+  })
+  async findById(@Req() req: IUserRequest) {
+    const id = req.user['sub'];
+    console.log(id);
+    const user = await this.usersService.findById(id);
+    return {
+      name: user.name,
+      userName: user.userName,
+      role: user.role,
+    };
   }
 
   @Roles(Role.Admin)
