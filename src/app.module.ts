@@ -10,6 +10,7 @@ import { UsersModule } from './users/user.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TasksService } from './Notifications/tasks.service';
 import { NotificationModule } from './Notifications/notifications.module';
+import { BullModule } from '@nestjs/bullmq';
 
 @Module({
   imports: [
@@ -21,6 +22,12 @@ import { NotificationModule } from './Notifications/notifications.module';
     }),
     ScheduleModule.forRoot(),
     NotificationModule,
+    BullModule.forRoot({
+      connection: {
+        host: 'localhost',
+        port: 6379,
+      },
+    }),
   ],
   controllers: [AppController],
   providers: [

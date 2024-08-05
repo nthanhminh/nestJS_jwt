@@ -1,25 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import {
-  Notification,
-  NotificationDocument,
-} from './schemas/notification.schema';
-import { CreateNotificationDto } from './dto/create-notification.dto';
+import { InjectQueue } from '@nestjs/bullmq';
+import { Queue } from 'bullmq';
 
 @Injectable()
 export class NotificationService {
   constructor(
-    @InjectModel(Notification.name)
-    private notificationModel: Model<NotificationDocument>,
+    @InjectQueue('send-birthday-message')
+    private readonly birthdayQueue: Queue,
   ) {}
 
-  async create(
-    createNotificationDto: CreateNotificationDto,
-  ): Promise<NotificationDocument> {
-    const createdNewNotification = new this.notificationModel(
-      createNotificationDto,
-    );
-    return createdNewNotification.save();
+  async addBirthdayMessageJob(data: any) {
+    await this.birthdayQueue.add('send-birthday-message', data);
   }
 }

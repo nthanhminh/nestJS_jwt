@@ -7,6 +7,10 @@ import {
 import { TasksService } from './tasks.service';
 import { NotificationService } from './notifications.service';
 import { UsersModule } from 'src/users/user.module';
+import { BullModule } from '@nestjs/bullmq';
+import { NotificationController } from './notifications.controller';
+import { BirthdayMessageProcessor } from './notifications.processor';
+import { NotificationRepository } from './notifications.repository';
 
 @Module({
   imports: [
@@ -14,8 +18,17 @@ import { UsersModule } from 'src/users/user.module';
     MongooseModule.forFeature([
       { name: Notification.name, schema: NotificationSchema },
     ]),
+    BullModule.registerQueue({
+      name: 'send-birthday-message',
+    }),
   ],
-  providers: [TasksService, NotificationService],
-  exports: [TasksService, NotificationService],
+  controllers: [NotificationController],
+  providers: [
+    NotificationRepository,
+    TasksService,
+    NotificationService,
+    BirthdayMessageProcessor,
+  ],
+  exports: [TasksService, NotificationService, NotificationRepository],
 })
 export class NotificationModule {}
