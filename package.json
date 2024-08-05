@@ -37,13 +37,15 @@
     "class-validator": "^0.14.1",
     "ioredis": "^5.4.1",
     "mongoose": "^8.5.2",
+    "multer": "^1.4.5-lts.1",
     "nestjs-i18n": "^10.4.5",
     "nodemailer": "^6.9.14",
     "project-name": "file:",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.1",
     "swagger-ui-express": "^5.0.1",
-    "uuid": "^10.0.0"
+    "uuid": "^10.0.0",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",

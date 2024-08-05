@@ -14,12 +14,14 @@ import { NotificationModule } from './Notifications/notifications.module';
 import { AcceptLanguageResolver, I18nModule, QueryResolver } from 'nestjs-i18n';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { BullModule } from '@nestjs/bullmq';
+import { UploadModule } from './Upload/upload.module';
 // import path from 'path';
 
 @Module({
   imports: [
     UsersModule,
     AuthModule,
+    UploadModule,
     MongooseModule.forRoot('mongodb://localhost:27017/login'),
     ConfigModule.forRoot({
       isGlobal: true,
