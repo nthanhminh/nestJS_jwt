@@ -25,4 +25,8 @@ export class UpdateUserDto {
   @ApiProperty({ description: 'birthday' })
   @ApiPropertyOptional()
   birthday?: string;
+
+  @ApiProperty({ description: 'token' })
+  @ApiPropertyOptional()
+  token?: string;
 }

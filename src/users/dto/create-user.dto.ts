@@ -23,4 +23,8 @@ export class CreateUserDto {
   @IsNotEmpty({ message: i18nValidationMessage('validation.NOT_EMPTY') })
   @ApiProperty({ description: 'birthday' })
   birthday: string;
+
+  // @IsNotEmpty({ message: i18nValidationMessage('validation.NOT_EMPTY') })
+  // @ApiProperty({ description: 'token' })
+  // token: string;
 }

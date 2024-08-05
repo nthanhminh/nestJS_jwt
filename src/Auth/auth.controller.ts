@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Query,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { AuthService } from './auth.service';
 import { AuthDto, AuthResponseDto } from './dto/auth.dto';
@@ -27,7 +35,11 @@ export class AuthController {
   })
   @ApiResponse({ status: 400, description: 'Bad request.' })
   signup(@Body() createUserDto: CreateUserDto) {
-    return this.authService.signUp(createUserDto);
+    try {
+      return this.authService.signUp(createUserDto);
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   @Post('signin')
@@ -57,5 +69,17 @@ export class AuthController {
     const refreshToken = req.user['refreshToken'];
     console.log(userId, refreshToken);
     return this.authService.refreshTokens(userId, refreshToken);
+  }
+
+  @Get('verify')
+  async verifyEmail(@Query('token') token: string): Promise<string> {
+    // You can access the 'token' query parameter here
+    console.log('Received token:', token);
+    const check = await this.authService.verifyEmail(token);
+    if (check) {
+      return 'Successful verify email';
+    } else {
+      return 'Error verify emaail';
+    }
   }
 }

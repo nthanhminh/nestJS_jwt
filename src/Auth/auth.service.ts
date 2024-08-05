@@ -9,6 +9,8 @@ import * as argon2 from 'argon2';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { AuthDto } from './dto/auth.dto';
+import crypto from 'crypto';
+import { VerifyService } from './verify.service';
 
 @Injectable()
 export class AuthService {
@@ -16,6 +18,7 @@ export class AuthService {
     private usersService: UsersService,
     private jwtService: JwtService,
     private configService: ConfigService,
+    private verifyService: VerifyService,
   ) {}
   async signUp(createUserDto: CreateUserDto): Promise<any> {
     const userExists = await this.usersService.findByUsername(
@@ -35,6 +38,9 @@ export class AuthService {
       newUser.role,
     );
     await this.updateRefreshToken(newUser._id, tokens.refreshToken);
+    await this.verifyService.addVerifyJob({
+      token: newUser.token,
+    });
     return tokens;
   }
 
@@ -53,8 +59,21 @@ export class AuthService {
     return this.usersService.update(userId, { refreshToken: null });
   }
 
+  generateEmailToken() {
+    const randomString = crypto
+      .randomBytes(length)
+      .toString('hex')
+      .slice(0, length);
+    return randomString;
+  }
+
   hashData(data: string) {
     return argon2.hash(data);
+  }
+
+  async verifyEmail(token: string) {
+    const user = await this.usersService.findByToken(token);
+    return user != undefined;
   }
 
   async updateRefreshToken(userId: string, refreshToken: string) {

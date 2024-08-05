@@ -4,6 +4,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from './schemas/user.schema';
 import { UsersController } from './user.controller';
 import { AuthMiddleware } from 'src/middlewares/auth.middleware';
+// import { AuthMiddleware } from 'src/middlewares/auth.middleware';
 
 @Module({
   imports: [

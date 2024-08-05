@@ -5,15 +5,22 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User, UserDocument } from './schemas/user.schema';
 import * as argon2 from 'argon2';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class UsersService {
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
 
   async create(createUserDto: CreateUserDto): Promise<UserDocument> {
-    const createdUser = new this.userModel(createUserDto);
+    const token = this.generateEmailToken();
+    const createdUser = new this.userModel({ ...createUserDto, token: token });
     console.log(createdUser);
     return createdUser.save();
+  }
+
+  generateEmailToken() {
+    const randomString = uuidv4();
+    return randomString;
   }
 
   async findAll(): Promise<UserDocument[]> {
@@ -22,6 +29,10 @@ export class UsersService {
 
   async findById(id: string): Promise<UserDocument> {
     return this.userModel.findById(id);
+  }
+
+  async findByToken(Token: string): Promise<UserDocument> {
+    return this.userModel.findOne({ Token }).exec();
   }
 
   async findByUsername(userName: string): Promise<UserDocument> {

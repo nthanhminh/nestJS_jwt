@@ -7,6 +7,9 @@ import { AccessTokenStrategy } from './strategies/accessToken.strategy';
 import { RefreshTokenStrategy } from './strategies/refreshToken.strategy';
 import * as dotenv from 'dotenv';
 import { AuthMiddleware } from 'src/middlewares/auth.middleware';
+import { BullModule } from '@nestjs/bullmq';
+import { VerifyService } from './verify.service';
+import { VerifyProcessor } from './verify.processor';
 
 dotenv.config();
 
@@ -20,8 +23,17 @@ console.log(process.env.JWT_SECRET);
       secret: process.env.JWT_SECRET || '',
       signOptions: { expiresIn: '60s' },
     }),
+    BullModule.registerQueue({
+      name: 'verify-email',
+    }),
   ],
-  providers: [AuthService, AccessTokenStrategy, RefreshTokenStrategy],
+  providers: [
+    AuthService,
+    AccessTokenStrategy,
+    RefreshTokenStrategy,
+    VerifyService,
+    VerifyProcessor,
+  ],
   controllers: [AuthController],
   exports: [AuthService],
 })

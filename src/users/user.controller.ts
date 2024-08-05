@@ -59,6 +59,7 @@ export class UsersController {
         }),
       };
     } catch (error) {
+      console.log(error);
       return {
         status: 400,
         description: await this.i18n.t('test.Bad Request', {
