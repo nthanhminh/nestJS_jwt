@@ -1,5 +1,5 @@
 {
     "HELLO": "Xin chào",
-    "BadRequest": "Yêu cầu không hợp lệ",
+    "Bad Request": "Yêu cầu không hợp lệ",
     "UserSuccessfullyCreated": "Tạo người dùng mới thành công"
 }

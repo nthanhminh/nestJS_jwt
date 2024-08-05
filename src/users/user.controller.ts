@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   Req,
+  UseFilters,
 } from '@nestjs/common';
 import { UsersService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -16,7 +17,11 @@ import { UserResponse } from './dto/userResponse.dto';
 import { Role } from 'src/Roles/enums/roles.enum';
 import { Roles } from 'src/Roles/roles.decorator';
 import { IUserRequest } from 'src/common/interfaces/requestType.interface';
-import { I18nService, I18nContext } from 'nestjs-i18n';
+import {
+  I18nService,
+  I18nContext,
+  I18nValidationExceptionFilter,
+} from 'nestjs-i18n';
 
 @ApiTags('users')
 @Controller('users')
@@ -28,6 +33,7 @@ export class UsersController {
 
   @Roles(Role.Admin)
   @Post('createUser')
+  @UseFilters(new I18nValidationExceptionFilter())
   @ApiOperation({ summary: 'Create a new user' })
   @ApiBody({ type: CreateUserDto })
   @ApiResponse({
@@ -55,7 +61,7 @@ export class UsersController {
     } catch (error) {
       return {
         status: 400,
-        description: await this.i18n.t('test.BadRequest', {
+        description: await this.i18n.t('test.Bad Request', {
           lang: I18nContext.current().lang,
         }),
       };

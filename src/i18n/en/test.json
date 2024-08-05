@@ -1,5 +1,5 @@
 {
     "HELLO": "Hello",
-    "BadRequest": "Bad Request",
+    "Bad Request": "Bad Request",
     "UserSuccessfullyCreated": "User successfully created."
 }
