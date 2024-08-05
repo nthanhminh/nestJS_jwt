@@ -9,7 +9,7 @@ import { NotificationService } from './notifications.service';
 import { UsersModule } from 'src/users/user.module';
 import { BullModule } from '@nestjs/bullmq';
 import { NotificationController } from './notifications.controller';
-import { BirthdayMessageProcessor } from './notifications.processor';
+// import { BirthdayMessageProcessor } from './notifications.processor';
 import { NotificationRepository } from './notifications.repository';
 
 @Module({
@@ -27,7 +27,7 @@ import { NotificationRepository } from './notifications.repository';
     NotificationRepository,
     TasksService,
     NotificationService,
-    BirthdayMessageProcessor,
+    // BirthdayMessageProcessor,
   ],
   exports: [TasksService, NotificationService, NotificationRepository],
 })

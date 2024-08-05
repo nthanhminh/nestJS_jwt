@@ -11,6 +11,8 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { TasksService } from './Notifications/tasks.service';
 import { NotificationModule } from './Notifications/notifications.module';
 import { BullModule } from '@nestjs/bullmq';
+import { AcceptLanguageResolver, I18nModule, QueryResolver } from 'nestjs-i18n';
+// import path from 'path';
 
 @Module({
   imports: [
@@ -27,6 +29,17 @@ import { BullModule } from '@nestjs/bullmq';
         host: 'localhost',
         port: 6379,
       },
+    }),
+    I18nModule.forRoot({
+      fallbackLanguage: 'en',
+      loaderOptions: {
+        path: 'src/i18n/',
+        watch: true,
+      },
+      resolvers: [
+        { use: QueryResolver, options: ['lang'] },
+        AcceptLanguageResolver,
+      ],
     }),
   ],
   controllers: [AppController],

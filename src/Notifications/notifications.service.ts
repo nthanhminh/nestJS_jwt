@@ -10,6 +10,7 @@ export class NotificationService {
   ) {}
 
   async addBirthdayMessageJob(data: any) {
-    await this.birthdayQueue.add('send-birthday-message', data);
+    console.log(data);
+    // await this.birthdayQueue.add('send-birthday-message', data);
   }
 }

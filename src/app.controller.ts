@@ -20,4 +20,9 @@ export class AppController {
     console.log(req.user);
     return `Information ${req.user}`;
   }
+
+  @Get('hello')
+  async getHello2(): Promise<string> {
+    return this.appService.getHello2();
+  }
 }

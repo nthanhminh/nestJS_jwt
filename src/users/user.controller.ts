@@ -16,11 +16,15 @@ import { UserResponse } from './dto/userResponse.dto';
 import { Role } from 'src/Roles/enums/roles.enum';
 import { Roles } from 'src/Roles/roles.decorator';
 import { IUserRequest } from 'src/common/interfaces/requestType.interface';
+import { I18nService, I18nContext } from 'nestjs-i18n';
 
 @ApiTags('users')
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly i18n: I18nService,
+  ) {}
 
   @Roles(Role.Admin)
   @Post('createUser')
@@ -43,12 +47,17 @@ export class UsersController {
       await this.usersService.create(newData);
       return {
         status: 200,
-        description: 'User successfully created.',
+        // description: 'User successfully created.',
+        description: await this.i18n.t('test.UserSuccessfullyCreated', {
+          lang: I18nContext.current().lang,
+        }),
       };
     } catch (error) {
       return {
         status: 400,
-        description: 'Bad request.',
+        description: await this.i18n.t('test.BadRequest', {
+          lang: I18nContext.current().lang,
+        }),
       };
     }
   }
