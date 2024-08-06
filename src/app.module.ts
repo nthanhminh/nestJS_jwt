@@ -22,7 +22,15 @@ import { UploadModule } from './Upload/upload.module';
     UsersModule,
     AuthModule,
     UploadModule,
-    MongooseModule.forRoot('mongodb://localhost:27017/login'),
+    // MongooseModule.forRoot('mongodb://localhost:27017/login'),
+    MongooseModule.forRootAsync({
+      imports: [ConfigModule], // Nhập module cấu hình
+      useFactory: async (configService: ConfigService) => ({
+        // uri: configService.get<string>('MONGODB_URI'),
+        uri: 'mongodb://localhost:27017/login',
+      }),
+      inject: [ConfigService], // Đưa ConfigService vào trong hàm factory
+    }),
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',
