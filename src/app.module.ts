@@ -15,6 +15,7 @@ import { AcceptLanguageResolver, I18nModule, QueryResolver } from 'nestjs-i18n';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { BullModule } from '@nestjs/bullmq';
 import { UploadModule } from './Upload/upload.module';
+import { CacheModule } from '@nestjs/cache-manager';
 // import path from 'path';
 
 @Module({
@@ -26,8 +27,8 @@ import { UploadModule } from './Upload/upload.module';
     MongooseModule.forRootAsync({
       imports: [ConfigModule], // Nhập module cấu hình
       useFactory: async (configService: ConfigService) => ({
-        // uri: configService.get<string>('MONGODB_URI'),
-        uri: 'mongodb://localhost:27017/login',
+        uri: configService.get<string>('MONGODB_URI'),
+        // uri: 'mongodb://localhost:27017/login',
       }),
       inject: [ConfigService], // Đưa ConfigService vào trong hàm factory
     }),
@@ -54,6 +55,7 @@ import { UploadModule } from './Upload/upload.module';
         AcceptLanguageResolver,
       ],
     }),
+    CacheModule.register(),
     MailerModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({

@@ -8,6 +8,7 @@ import {
   Delete,
   Req,
   UseFilters,
+  Inject,
 } from '@nestjs/common';
 import { UsersService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -22,6 +23,8 @@ import {
   I18nContext,
   I18nValidationExceptionFilter,
 } from 'nestjs-i18n';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
 
 @ApiTags('users')
 @Controller('users')
@@ -29,6 +32,7 @@ export class UsersController {
   constructor(
     private readonly usersService: UsersService,
     private readonly i18n: I18nService,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
   @Roles(Role.Admin)
@@ -80,17 +84,27 @@ export class UsersController {
   @ApiResponse({ status: 404, description: 'Users not found.' })
   async findAll() {
     try {
+      const cachedUsers = await this.cacheManager.get('users');
+
+      if (cachedUsers) {
+        return cachedUsers;
+      }
+
       const users = await this.usersService.findAll();
-      const res = users.map((user) => {
-        return {
-          name: user.name,
-          userName: user.userName,
-          role: user.role,
-        };
-      });
-      return res;
+      const formattedUsers = users.map((user) => ({
+        name: user.name,
+        userName: user.userName,
+        role: user.role,
+      }));
+
+      await this.cacheManager.set('users', formattedUsers);
+
+      return formattedUsers;
     } catch (error) {
-      return { status: 404, description: 'Users not found.' };
+      return {
+        status: 404,
+        description: 'Users not found.',
+      };
     }
   }
 
